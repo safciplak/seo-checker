@@ -17,9 +17,10 @@ class RobotTxtController extends Controller
      */
     public function __construct(RobotTxtRepository $robotTxtRepository)
     {
+
         $this->robotTxtRepository = $robotTxtRepository;
         $this->robotTxtRepository->check();
-        if($_SESSION['allow'] == 1){
+        if(session('allow') == 1){
             $this->robotTxtRepository->findDirectiveSiteMap();
             $result = $this->robotTxtRepository->findDirectiveHost();
 //            $this->robotTxtRepository->saveToExcel();

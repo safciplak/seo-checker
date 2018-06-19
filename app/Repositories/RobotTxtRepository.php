@@ -19,6 +19,15 @@ class RobotTxtRepository
     private $siteAddress;
 
     /**
+     * RobotTxtRepository constructor.
+     * @param $array
+     */
+    public function __construct()
+    {
+
+    }
+
+    /**
      * Check sitemap
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -79,7 +88,7 @@ class RobotTxtRepository
             $this->array = $array;
             $this->saveToExcel();
 
-            $_SESSION['allow'] = 1;
+            session(['allow' => 1]);
         }
 
         if (in_array($retcode, [400, 404, 501])) {
@@ -102,7 +111,7 @@ class RobotTxtRepository
             $this->array = $array;
             $this->saveToExcel();
 
-            $_SESSION['allow'] = 0;
+            session(['allow' => 0]);
         }
 
 
