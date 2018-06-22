@@ -38,8 +38,11 @@ class RobotTxtController extends Controller
         }
 
         $array = session('array');
+        $address = session('address');
 
-        return view('welcome', compact('array'));
+//        echo '<pre>'; print_r($array); die;
+
+        return view('welcome', compact('array', 'address'));
 //        return redirect()->back();
 
     }

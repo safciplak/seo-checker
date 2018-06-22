@@ -7,11 +7,23 @@
 
     <title>Laravel</title>
 
+    <style>
+        .green {
+            background-color: green;
+            color: black;
+        }
+
+        .red {
+            background-color: red;
+            color: black;
+        }
+    </style>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
 
     <!-- Styles -->
@@ -74,12 +86,19 @@
     {{$message}}
 @endif
 
+
 <form method="POST" action="{{route('checkRobotTxt')}}">
     {{csrf_field()}}
     <input type="text" name="siteAddress"/>
-    <input type="submit" value="Check Now"/>
+    <input type="submit" value="Проверьте сейчас"/>
 </form>
-<a href="test.csv">Download Excel</a>
+
+
+
+@if(isset($address))
+    <input type="button" onclick="tableToExcel('testTable', 'insvisions test case')" value="Export to Excel">
+    <br/>   <h1>запрос сайта: {{$address}}</h1>
+@endif
 
 <div class="flex-center position-ref full-height">
     @if (Route::has('login'))
@@ -93,7 +112,8 @@
         </div>
     @endif
 
-        <table class="table">
+    @if(isset($array))
+        <table class="table" id="testTable">
             <thead class="thead-dark">
             <tr>
                 <th scope="col">#</th>
@@ -105,51 +125,32 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-                <td>Состояние</td>
-                <td>@mdo</td>
-            </tr>
-            <tr>
-                <th scope="row"></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>Рекомендации</td>
-                <td>@5</td>
-            </tr>
 
-            <tr>
-                <th scope="row">1</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                <td>Состояние</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <th scope="row"></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>Рекомендации</td>
-                <td>@twitter</td>
-            </tr>
+            @foreach($array as $item)
+                <tr>
+                    <th scope="row">{{$item['no']}}</th>
+                    <td>{{$item['no']}}</td>
+                    <td>{{$item['testName']}}</td>
+
+                    <td @if($item['status'] == 'Ок') class="green" @else class="red" @endif>{{$item['status']}}</td>
+                    <td>Состояние</td>
+                    <td>{{$item['condition']}}</td>
+                </tr>
+                <tr>
+                    <th scope="row"></th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Рекомендации</td>
+                    <td>{{$item['currentState']}}</td>
+                </tr>
+
+                </tr>
+            @endforeach
+
             </tbody>
         </table>
-
-
-
-
-
-
-
-
-
-
+    @endif
 
     {{--<div class="content">--}}
     {{--<div class="title m-b-md">--}}
@@ -165,5 +166,19 @@
     {{--</div>--}}
     {{--</div>--}}
 </div>
+<script>
+  var tableToExcel = (function() {
+    var uri = 'data:application/vnd.ms-excel;base64,'
+      , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+      , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+      , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+    return function(table, name) {
+      if (!table.nodeType) table = document.getElementById(table)
+      var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+      window.location.href = uri + base64(format(template, ctx))
+    }
+  })()
+</script>
+
 </body>
 </html>

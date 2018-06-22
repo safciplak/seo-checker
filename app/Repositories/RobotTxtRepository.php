@@ -55,6 +55,8 @@ class RobotTxtRepository
 
         $this->siteAddress = $address;
 
+        session(['address' => $address]);
+
         $fullPath = $address . "/robots.txt";
         $ch = curl_init($fullPath);
         curl_setopt($ch, CURLOPT_HEADER, true);
@@ -73,6 +75,7 @@ class RobotTxtRepository
             $array[1]['testName'] = 'Проверка наличия файла robots.txt';
             $array[1]['status'] = 'Ок';
             $array[1]['currentState'] = 'Доработки не требуются';
+            $array[1]['condition'] = 'Файл robots.txt присутствует';
 
             $this->array = $array;
 
@@ -80,6 +83,7 @@ class RobotTxtRepository
             $array[6]['testName'] = 'Проверка кода ответа сервера для файла robots.txt';
             $array[6]['status'] = 'Ок';
             $array[6]['currentState'] = 'Доработки не требуются';
+            $array[6]['condition'] = 'Файл robots.txt отдаёт код ответа сервера '. $retcode;
 
 
             $this->array = $array;
@@ -93,14 +97,17 @@ class RobotTxtRepository
             $array[1]['testName'] = 'Проверка наличия файла robots.txt';
             $array[1]['status'] = 'Ошибка';
             $array[1]['currentState'] = 'Создать файл robots.txt и разместить его на сайте.';
+            $array[1]['condition'] = 'Файл robots.txt отсутствует';
 
             $this->array = $array;
 
 
             $array[6]['no'] = 12;
             $array[6]['testName'] = 'Проверка кода ответа сервера для файла robots.txt';
-            $array[6]['status'] = 'Ок';
-            $array[6]['currentState'] = 'Файл robots.txt должны отдавать код ответа 200, иначе файл не будет обрабатываться. Необходимо настроить сайт таким образом, чтобы при обращении к файлу robots.txt сервер возвращает код ответа 200';
+            $array[6]['status'] = 'Ошибка';
+            $array[6]['currentState'] = 'Файл robots.txt должны отдавать код ответа '.$retcode.', иначе файл не будет обрабатываться. Необходимо настроить сайт таким образом, чтобы при обращении к файлу robots.txt сервер возвращает код ответа '. $retcode;
+            $array[6]['condition'] = 'При обращении к файлу robots.txt сервер возвращает код ответа (указать код)';
+
 
             $this->array = $array;
 
@@ -143,36 +150,47 @@ class RobotTxtRepository
         switch ($clen) {
             case $clen < 1024:
                 $size = $clen . ' B';
-                $sizeType = 'B';
+                $realSize = 1;
                 break;
             case $clen < 1048576:
                 $size = round($clen / 1024, 2) . ' KB';
-                $sizeType = 'KB';
+                $realSize = 2;
                 break;
             case $clen < 1073741824:
                 $size = round($clen / 1048576, 2) . ' MB';
-                $sizeType = 'MB';
+                $realSize = 3;
                 break;
             case $clen < 1099511627776:
                 $size = round($clen / 1073741824, 2) . ' GB';
-                $sizeType = 'GB';
+                $realSize = 4;
                 break;
         }
 
 
-        if ($size < 32 && $sizeType == 'KB') {
+
+
+
+        $withoutAlphanumeric = preg_replace( '/[^0-9]/', '', $size );
+
+
+
+
+        if ($realSize == 1) {
             $array['no'] = 10;
             $array['testName'] = 'Проверка размера файла robots.txt';
             $array['status'] = 'Ок';
             $array['currentState'] = 'Доработки не требуются';
+            $array['condition'] = 'Размер файла robots.txt составляет '.$size.', что находится в пределах допустимой нормы';
         } else {
             $array['no'] = 10;
             $array['testName'] = 'Проверка размера файла robots.txt';
             $array['status'] = 'Ошибка';
             $array['currentState'] = 'Максимально допустимый размер файла robots.txt составляем 32 кб. Необходимо отредактировть файл robots.txt таким образом, чтобы его размер не превышал 32 Кб';
+            $array['condition'] = 'Размера файла robots.txt составляет '.$size.', что превышает допустимую норму';
         }
 
         $this->array[4] = $array;
+
 
         return $size;
         // return formatted size
@@ -219,6 +237,7 @@ class RobotTxtRepository
                 $array['testName'] = 'Проверка указания директивы Sitemap';
                 $array['status'] = 'Ок';
                 $array['currentState'] = 'Доработки не требуются';
+                $array['condition'] = 'Директива Sitemap указана';
             }
         } else {
 //            echo "No matches found";
@@ -226,6 +245,7 @@ class RobotTxtRepository
             $array['testName'] = 'Проверка указания директивы Sitemap';
             $array['status'] = 'Ошибка';
             $array['currentState'] = 'Добавить в файл robots.txt директиву Sitemap';
+            $array['condition'] = 'В файле robots.txt не указана директива Sitemap';
         }
         $this->array[5] = $array;
 
@@ -258,6 +278,7 @@ class RobotTxtRepository
             $array['testName'] = 'Проверка указания директивы Host';
             $array['status'] = 'Ок';
             $array['currentState'] = 'Доработки не требуются';
+            $array['condition'] = 'Директива Host указана';
             $this->array[2] = $array;
 
 //            $this->array['host'] = implode("\n", $matches[0]);
@@ -269,11 +290,13 @@ class RobotTxtRepository
                 $array['testName'] = 'Проверка количества директив Host, прописанных в файле';
                 $array['status'] = 'Ок';
                 $array['currentState'] = 'Доработки не требуются';
+                $array['condition'] = 'В файле прописана 1 директива Host';
             } else if ($hostDirectiveCount > 1) {
                 $array['no'] = 8;
                 $array['testName'] = 'Проверка количества директив Host, прописанных в файле';
                 $array['status'] = 'Ошибка';
                 $array['currentState'] = 'Директива Host должна быть указана в файле толоко 1 раз. Необходимо удалить все дополнительные директивы Host и оставить только 1, корректную и соответствующую основному зеркалу сайта';
+                $array['condition'] = 'В файле прописано несколько директив Host';
             }
             $this->array[3] = $array;
         } else {
