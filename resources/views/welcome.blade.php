@@ -87,7 +87,7 @@
 @endif
 
 
-<form method="POST" action="{{route('checkRobotTxt')}}">
+<form method="GET" action="{{route('checkRobotTxt')}}">
     {{csrf_field()}}
     <input type="text" name="siteAddress"/>
     <input type="submit" value="Проверьте сейчас"/>
@@ -98,7 +98,7 @@
 <?php $address = session('address'); ?>
 @if(isset($address))
     <input type="button" onclick="tableToExcel('testTable', 'insvisions test case')" value="Export to Excel">
-    <br/>   <h1>запрос сайта: {{session('address')}}</h1>
+    <br/>   <h1>запрос сайта: {{request('siteAddress')}}</h1>
 @endif
 
 <div class="flex-center position-ref full-height">

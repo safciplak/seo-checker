@@ -14,5 +14,5 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::post('checkRobotTxt', 'RobotTxtController@check')->name('checkRobotTxt');
+Route::get('checkRobotTxt', 'RobotTxtController@check')->name('checkRobotTxt');
 Route::get('saveToExcel', 'RobotTxtController@saveToExcel')->name('saveToExcel');
