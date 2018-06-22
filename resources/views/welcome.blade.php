@@ -95,9 +95,10 @@
 
 
 
+<?php $address = session('address'); ?>
 @if(isset($address))
     <input type="button" onclick="tableToExcel('testTable', 'insvisions test case')" value="Export to Excel">
-    <br/>   <h1>запрос сайта: {{$address}}</h1>
+    <br/>   <h1>запрос сайта: {{session('address')}}</h1>
 @endif
 
 <div class="flex-center position-ref full-height">
@@ -128,13 +129,13 @@
 
             @foreach($array as $item)
                 <tr>
-                    <th scope="row">{{$item['no']}}</th>
-                    <td>{{$item['no']}}</td>
-                    <td>{{$item['testName']}}</td>
+                    <th scope="row">{{$item['no'] ?? ''}}</th>
+                    <td>{{$item['no'] ?? ''}}</td>
+                    <td>{{$item['testName'] ?? ''}}</td>
 
-                    <td @if($item['status'] == 'Ок') class="green" @else class="red" @endif>{{$item['status']}}</td>
+                    <td @if($item['status'] == 'Ок') class="green" @else class="red" @endif>{{$item['status'] ?? ''}}</td>
                     <td>Состояние</td>
-                    <td>{{$item['condition']}}</td>
+                    <td>{{$item['condition'] ?? ''}}</td>
                 </tr>
                 <tr>
                     <th scope="row"></th>
@@ -142,7 +143,7 @@
                     <td></td>
                     <td></td>
                     <td>Рекомендации</td>
-                    <td>{{$item['currentState']}}</td>
+                    <td>{{$item['currentState'] ?? ''}}</td>
                 </tr>
 
                 </tr>
