@@ -20,23 +20,34 @@ class RobotTxtController extends Controller
 
         $this->robotTxtRepository = $robotTxtRepository;
         $this->robotTxtRepository->check();
-        if(session('allow') == 1){
+
+    }
+
+    /**
+     * Check
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function check()
+    {
+        if (session('allow') == 1) {
             $this->robotTxtRepository->findDirectiveSiteMap();
             $result = $this->robotTxtRepository->findDirectiveHost();
+            session(['array' => array_sort($result)]);
 //            $this->robotTxtRepository->saveToExcel();
         }
 
+        $array = session('array');
+
+        return view('welcome', compact('array'));
+//        return redirect()->back();
 
     }
 
-    public function check()
-    {
-//        $this->robotTxtRepository->check();
-
-        return redirect()->back();
-
-    }
-
+    /**
+     * Save To Excel
+     *
+     */
     public function saveToExcel()
     {
         $this->robotTxtRepository->saveToExcel();

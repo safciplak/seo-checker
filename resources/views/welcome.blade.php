@@ -10,6 +10,10 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
     <!-- Styles -->
     <style>
         html, body {
@@ -65,11 +69,12 @@
     </style>
 </head>
 <body>
+
 @if(isset($message))
     {{$message}}
-
 @endif
-<form method="GET" action="{{route('checkRobotTxt')}}">
+
+<form method="POST" action="{{route('checkRobotTxt')}}">
     {{csrf_field()}}
     <input type="text" name="siteAddress"/>
     <input type="submit" value="Check Now"/>
@@ -88,19 +93,77 @@
         </div>
     @endif
 
-    <div class="content">
-        <div class="title m-b-md">
-            Laravel
-        </div>
+        <table class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">№</th>
+                <th scope="col">Название проверки</th>
+                <th scope="col">Статус</th>
+                <th scope="col"></th>
+                <th scope="col">Текущее состояние</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+                <td>Состояние</td>
+                <td>@mdo</td>
+            </tr>
+            <tr>
+                <th scope="row"></th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Рекомендации</td>
+                <td>@5</td>
+            </tr>
 
-        <div class="links">
-            <a href="https://laravel.com/docs">Documentation</a>
-            <a href="https://laracasts.com">Laracasts</a>
-            <a href="https://laravel-news.com">News</a>
-            <a href="https://forge.laravel.com">Forge</a>
-            <a href="https://github.com/laravel/laravel">GitHub</a>
-        </div>
-    </div>
+            <tr>
+                <th scope="row">1</th>
+                <td>Jacob</td>
+                <td>Thornton</td>
+                <td>@fat</td>
+                <td>Состояние</td>
+                <td>@fat</td>
+            </tr>
+            <tr>
+                <th scope="row"></th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Рекомендации</td>
+                <td>@twitter</td>
+            </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+
+
+
+
+
+
+    {{--<div class="content">--}}
+    {{--<div class="title m-b-md">--}}
+    {{--Laravel--}}
+    {{--</div>--}}
+
+    {{--<div class="links">--}}
+    {{--<a href="https://laravel.com/docs">Documentation</a>--}}
+    {{--<a href="https://laracasts.com">Laracasts</a>--}}
+    {{--<a href="https://laravel-news.com">News</a>--}}
+    {{--<a href="https://forge.laravel.com">Forge</a>--}}
+    {{--<a href="https://github.com/laravel/laravel">GitHub</a>--}}
+    {{--</div>--}}
+    {{--</div>--}}
 </div>
 </body>
 </html>

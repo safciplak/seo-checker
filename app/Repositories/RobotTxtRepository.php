@@ -55,7 +55,6 @@ class RobotTxtRepository
 
         $this->siteAddress = $address;
 
-
         $fullPath = $address . "/robots.txt";
         $ch = curl_init($fullPath);
         curl_setopt($ch, CURLOPT_HEADER, true);
@@ -69,60 +68,51 @@ class RobotTxtRepository
 //        $array['siteAddress'] = request('siteAddress');
 
         if ($retcode == 200) {
-            $this->array = null;
-            $array['no'] = 1;
-            $array['testName'] = 'Проверка наличия файла robots.txt';
-            $array['status'] = 'Ок';
-            $array['currentState'] = 'Доработки не требуются';
+
+            $array[1]['no'] = 1;
+            $array[1]['testName'] = 'Проверка наличия файла robots.txt';
+            $array[1]['status'] = 'Ок';
+            $array[1]['currentState'] = 'Доработки не требуются';
 
             $this->array = $array;
-            $this->saveToExcel();
 
-            $this->array = null;
-            $array['no'] = 12;
-            $array['testName'] = 'Проверка кода ответа сервера для файла robots.txt';
-            $array['status'] = 'Ок';
-            $array['currentState'] = 'Доработки не требуются';
+            $array[6]['no'] = 12;
+            $array[6]['testName'] = 'Проверка кода ответа сервера для файла robots.txt';
+            $array[6]['status'] = 'Ок';
+            $array[6]['currentState'] = 'Доработки не требуются';
 
-            $this->array = null;
+
             $this->array = $array;
-            $this->saveToExcel();
+
 
             session(['allow' => 1]);
         }
 
         if (in_array($retcode, [400, 404, 501])) {
-            $this->array = null;
-            $array['no'] = 1;
-            $array['testName'] = 'Проверка наличия файла robots.txt';
-            $array['status'] = 'Ошибка';
-            $array['currentState'] = 'Создать файл robots.txt и разместить его на сайте.';
+            $array[1]['no'] = 1;
+            $array[1]['testName'] = 'Проверка наличия файла robots.txt';
+            $array[1]['status'] = 'Ошибка';
+            $array[1]['currentState'] = 'Создать файл robots.txt и разместить его на сайте.';
 
             $this->array = $array;
-            $this->saveToExcel();
-            $this->array = null;
 
-            $array['no'] = 12;
-            $array['testName'] = 'Проверка кода ответа сервера для файла robots.txt';
-            $array['status'] = 'Ок';
-            $array['currentState'] = 'Файл robots.txt должны отдавать код ответа 200, иначе файл не будет обрабатываться. Необходимо настроить сайт таким образом, чтобы при обращении к файлу robots.txt сервер возвращает код ответа 200';
 
-            $this->array = null;
+            $array[6]['no'] = 12;
+            $array[6]['testName'] = 'Проверка кода ответа сервера для файла robots.txt';
+            $array[6]['status'] = 'Ок';
+            $array[6]['currentState'] = 'Файл robots.txt должны отдавать код ответа 200, иначе файл не будет обрабатываться. Необходимо настроить сайт таким образом, чтобы при обращении к файлу robots.txt сервер возвращает код ответа 200';
+
             $this->array = $array;
-            $this->saveToExcel();
+
 
             session(['allow' => 0]);
         }
-
-
         $fileSize = $this->getRemoteFilesize($fullPath);
         $array['responseCode'] = $retcode;
         $array['fileSize'] = $fileSize;
-
-
         curl_close($ch);
-
-        return view('welcome', compact('message', 'array'));
+        session(['array' => $this->array]);
+//        return view('welcome', compact('message', 'array'));
     }
 
     /**
@@ -169,7 +159,6 @@ class RobotTxtRepository
                 break;
         }
 
-        $this->array = null;
 
         if ($size < 32 && $sizeType == 'KB') {
             $array['no'] = 10;
@@ -183,9 +172,7 @@ class RobotTxtRepository
             $array['currentState'] = 'Максимально допустимый размер файла robots.txt составляем 32 кб. Необходимо отредактировть файл robots.txt таким образом, чтобы его размер не превышал 32 Кб';
         }
 
-        $this->array = $array;
-
-        $this->saveToExcel();
+        $this->array[4] = $array;
 
         return $size;
         // return formatted size
@@ -225,14 +212,13 @@ class RobotTxtRepository
         $pattern = "/^.*$pattern.*\$/m";
 // search, and store all matching occurences in $matches
 
-        $this->array = null;
+
         if (preg_match_all($pattern, $contents, $matches)) {
             if (isset($matches[0])) {
                 $array['no'] = 11;
                 $array['testName'] = 'Проверка указания директивы Sitemap';
                 $array['status'] = 'Ок';
                 $array['currentState'] = 'Доработки не требуются';
-
             }
         } else {
 //            echo "No matches found";
@@ -241,10 +227,7 @@ class RobotTxtRepository
             $array['status'] = 'Ошибка';
             $array['currentState'] = 'Добавить в файл robots.txt директиву Sitemap';
         }
-
-        $this->array = $array;
-
-        $this->saveToExcel();
+        $this->array[5] = $array;
 
         return $this->array;
     }
@@ -256,7 +239,6 @@ class RobotTxtRepository
      */
     public function findDirectiveHost()
     {
-
         $file = $this->siteAddress . '/robots.txt';
 
 // the following line prevents the browser from parsing this as HTML.
@@ -272,18 +254,16 @@ class RobotTxtRepository
 
         if (preg_match_all($pattern, $contents, $matches)) {
 
-            $this->array = null;
             $array['no'] = 6;
             $array['testName'] = 'Проверка указания директивы Host';
             $array['status'] = 'Ок';
             $array['currentState'] = 'Доработки не требуются';
-            $this->array = $array;
-            $this->saveToExcel();
+            $this->array[2] = $array;
 
 //            $this->array['host'] = implode("\n", $matches[0]);
 
             $hostDirectiveCount = count($matches[0]);
-            $this->array = null;
+
             if ($hostDirectiveCount == 1) {
                 $array['no'] = 8;
                 $array['testName'] = 'Проверка количества директив Host, прописанных в файле';
@@ -295,20 +275,14 @@ class RobotTxtRepository
                 $array['status'] = 'Ошибка';
                 $array['currentState'] = 'Директива Host должна быть указана в файле толоко 1 раз. Необходимо удалить все дополнительные директивы Host и оставить только 1, корректную и соответствующую основному зеркалу сайта';
             }
-            $this->array = $array;
-            $this->saveToExcel();
-            $this->array = null;
-
+            $this->array[3] = $array;
         } else {
-            $this->array = null;
             $array['no'] = 6;
             $array['testName'] = 'Проверка указания директивы Host';
             $array['status'] = 'Ошибка';
             $array['currentState'] = 'Для того, чтобы поисковые системы знали, какая версия сайта является основных зеркалом, необходимо прописать адрес основного зеркала в директиве Host. В данный момент это не прописано. Необходимо добавить в файл robots.txt директиву Host. Директива Host задётся в файле 1 раз, после всех правил.';
-            $this->array = $array;
-            $this->saveToExcel();
+            $this->array[2] = $array;
         }
-
 
         return $this->array;
     }
