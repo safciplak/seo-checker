@@ -95,7 +95,7 @@
 
 
 
-<?php $address = session('address'); ?>
+<?php $address = request('siteAddress'); ?>
 @if(isset($address))
     <input type="button" onclick="tableToExcel('testTable', 'insvisions test case')" value="Export to Excel">
     <br/>   <h1>запрос сайта: {{request('siteAddress')}}</h1>
